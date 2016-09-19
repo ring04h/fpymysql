@@ -10,7 +10,7 @@ desc:   A Friendly pymysql Class
 import pymysql
 
 class MYSQL:
-    """A Friendly pymysql Class"""
+    """A Friendly pymysql Class, Provide CRUD functionality"""
 
     def __init__(self, dbhost, dbuser, dbpwd, dbname, dbcharset):
         self.dbhost = dbhost
@@ -38,7 +38,7 @@ class MYSQL:
             sql = "INSERT INTO {table} SET {params}".format(table=table, params=params)
 
             result = cursor.execute(sql)
-            self.connection.commit()    # not autocommit
+            self.connection.commit() # not autocommit
 
             return result
 
@@ -57,9 +57,29 @@ class MYSQL:
                 table=table, where=where, limits=limits)
 
             result = cursor.execute(sql)
-            self.connection.commit()    # not autocommit
+            self.connection.commit() # not autocommit
 
             return result
+
+    def update(self, table, data, condition):
+        """mysql update() function"""
+        with self.connection.cursor() as cursor:
+            params = self.join_field_value(data)
+            if not condition:
+                where = '1';
+            elif isinstance(condition, dict):
+                where = self.join_field_value( condition, ' AND ' )
+            else:
+                where = condition
+
+            sql = "UPDATE {table} SET {params} WHERE {where}".format(
+                table=table, params=params, where=where)
+
+            result = cursor.execute(sql)
+                self.connection.commit() # not autocommit
+
+            return result
+
 
     def close(self):
         if self.connection:
