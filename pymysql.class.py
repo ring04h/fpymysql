@@ -3,7 +3,7 @@
 """
 author: ringzero@0x557.org
 home:   http://github.com/ring04h/fpymysql
-desc:   A Friendly pymysql Class
+desc:   A Friendly pymysql CURD Class
 
 """
 
@@ -42,7 +42,7 @@ class MYSQL:
 
             return result
 
-    def delete(self, table, condition=None, limit=0):
+    def delete(self, table, condition=None, limit=None):
         """mysql delete() function"""
         with self.connection.cursor() as cursor:
             if not condition:
@@ -80,13 +80,25 @@ class MYSQL:
 
             return result
 
-    def fetch_rows(self, table, condition, limit):
+    def fetch_rows(self, table, fields=None, condition, limit):
         """mysql select() function"""
         with self.connection.cursor() as cursor:
             sql = "SELECT `id`, `password` FROM `users` WHERE `email`=%s"
             cursor.execute(sql, ('webmaster@python.org',))
             result = cursor.fetchone()
             print(result)
+
+    def fetchone(self, sql):
+        """execute custom sql query"""
+        pass
+
+    def fetchmany(self, sql, size):
+        """execute custom sql query"""
+        pass
+
+    def fetchall(self, sql):
+        """execute custom sql query"""
+        pass
 
     def close(self):
         if self.connection:
