@@ -76,10 +76,17 @@ class MYSQL:
                 table=table, params=params, where=where)
 
             result = cursor.execute(sql)
-                self.connection.commit() # not autocommit
+            self.connection.commit() # not autocommit
 
             return result
 
+    def fetch_rows(self, table, condition, limit):
+        """mysql select() function"""
+        with self.connection.cursor() as cursor:
+            sql = "SELECT `id`, `password` FROM `users` WHERE `email`=%s"
+            cursor.execute(sql, ('webmaster@python.org',))
+            result = cursor.fetchone()
+            print(result)
 
     def close(self):
         if self.connection:
