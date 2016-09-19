@@ -5,7 +5,7 @@ Based on Mysql.class.php
    
 不想使用sqlalchemy, 又没有好用的轮子类, 就自己造一个了   
    
-## EXMPLE
+## EXAMPLE 使用帮助
 数据库表结构   
    
 ```sql
