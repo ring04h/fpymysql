@@ -5,6 +5,31 @@ author: ringzero@0x557.org
 home:   http://github.com/ring04h/fpymysql
 desc:   A Friendly pymysql CURD Class
 
+https://dev.mysql.com/doc/connector-python/en/connector-python-reference.html
+
+# db = MYSQL('localhost', 'root', '', 'wyproxy', 'utf8')
+
+# data = {
+#     'host' : 'www.qq.com',
+#     'url' : 'http://www.qq.com',
+# }
+
+# field = ('host','url','port')
+
+# print db.insert('capture', data)
+
+# fetch_rows = db.fetch_rows('capture', condition=data, order='id asc')
+# print fetch_rows
+
+# sql = 'select * from capture limit 0, 5'
+# rows = db.query(sql)
+# print rows
+
+
+# print db.delete('capture', data)
+
+# db.insert('capture', data)
+
 """
 
 import pymysql
@@ -52,8 +77,8 @@ class MYSQL:
             else:
                 where = condition
 
-            limits = " LIMIT {limit}".format(limit=limit) if limit else ""
-            sql = "DELETE FROM {table} WHERE {where}{limits}".format(
+            limits = "LIMIT {limit}".format(limit=limit) if limit else ""
+            sql = "DELETE FROM {table} WHERE {where} {limits}".format(
                 table=table, where=where, limits=limits)
 
             result = cursor.execute(sql)
@@ -80,25 +105,51 @@ class MYSQL:
 
             return result
 
-    def fetch_rows(self, table, fields=None, condition, limit):
+    def fetch_rows(self, table, fields=None, condition=None, order=None, limit=None):
         """mysql select() function"""
         with self.connection.cursor() as cursor:
-            sql = "SELECT `id`, `password` FROM `users` WHERE `email`=%s"
-            cursor.execute(sql, ('webmaster@python.org',))
-            result = cursor.fetchone()
-            print(result)
+            # SELECT FIELDS
+            if not fields:
+                fields = '*'
+            elif isinstance(fields, tuple) or isinstance(fields, list):
+                fields = '`, `'.join(fields)
+                fields = '`{fields}`'.format(fields=fields)
+            else:
+                fields = fields
 
-    def fetchone(self, sql):
-        """execute custom sql query"""
-        pass
+            # WHERE CONDITION
+            if not condition:
+                where = '1';
+            elif isinstance(condition, dict):
+                where = self.join_field_value( condition, ' AND ' )
+            else:
+                where = condition
 
-    def fetchmany(self, sql, size):
-        """execute custom sql query"""
-        pass
+            # ORDER BY OPTIONS
+            if not order:
+                orderby = ''
+            else:
+                orderby = 'ORDER BY {order}'.format(order=order)
 
-    def fetchall(self, sql):
+            # LIMIT NUMS
+            limits = "LIMIT {limit}".format(limit=limit) if limit else ""
+            sql = "SELECT {fields} FROM {table} WHERE {where} {orderby} {limits}".format(
+                fields=fields, 
+                table=table, 
+                where=where, 
+                orderby=orderby,
+                limits=limits)
+
+            cursor.execute(sql)
+            return cursor.fetchall()
+
+    def query(self, sql):
         """execute custom sql query"""
-        pass
+        with self.connection.cursor() as cursor:
+            if not sql:
+                return
+            cursor.execute(sql)
+            return cursor.fetchall()
 
     def close(self):
         if self.connection:
@@ -115,14 +166,3 @@ class MYSQL:
         """close mysql database connection"""
         self.close()
 
-db = MYSQL('localhost', 'root', '', 'wyproxy', 'utf8')
-
-data = {
-    'host' : 'www.qq.com',
-    'url' : 'http://www.qq.com',
-}
-
-print db.insert('capture', data)
-print db.delete('capture', data)
-
-# db.insert('capture', data)
