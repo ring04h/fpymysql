@@ -6,7 +6,12 @@ Based on Mysql.class.php
 不想使用sqlalchemy, 又没有好用的轮子类, 就自己造一个了   
    
 ## EXAMPLE 使用帮助
-数据库表结构   
+### 引入Class类
+```python
+from libmysql import MYSQL
+```
+
+### 数据库表结构   
    
 ```sql
 CREATE TABLE `users` (
