@@ -120,13 +120,16 @@ class MYSQL:
             cursor.execute(sql)
             return cursor.fetchall()
 
-    def query(self, sql):
+    def query(self, sql, fetchone=False):
         """execute custom sql query"""
         with self.connection.cursor() as cursor:
             if not sql:
                 return
             cursor.execute(sql)
-            return cursor.fetchall()
+            if fetchone:
+                return cursor.fetchone()
+            else:
+                return cursor.fetchall()
 
     def close(self):
         if self.connection:
