@@ -82,7 +82,7 @@ class MYSQL:
 
             return result
 
-    def fetch_rows(self, table, fields=None, condition=None, order=None, limit=None):
+    def fetch_rows(self, table, fields=None, condition=None, order=None, limit=None, fetchone=False):
         """mysql select() function"""
         with self.connection.cursor() as cursor:
             # SELECT FIELDS
@@ -118,7 +118,11 @@ class MYSQL:
                 limits=limits)
 
             cursor.execute(sql)
-            return cursor.fetchall()
+            
+            if fetchone:
+                return cursor.fetchone()
+            else:
+                return cursor.fetchall()
 
     def query(self, sql, fetchone=False):
         """execute custom sql query"""
