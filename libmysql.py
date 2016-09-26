@@ -7,6 +7,8 @@ desc:   A Friendly pymysql CURD Class
 
 https://dev.mysql.com/doc/connector-python/en/connector-python-reference.html
 
+SQL Injection Warning: pymysql.escape_string(value)
+
 """
 
 import pymysql
@@ -142,7 +144,7 @@ class MYSQL:
     def join_field_value(self, data, glue = ', '):
         sql = comma = ''
         for key, value in data.iteritems():
-            sql +=  "{}`{}` = '{}'".format(comma, key, value)
+            sql +=  "{}`{}` = '{}'".format(comma, key, pymysql.escape_string(value))
             comma = glue
         return sql
 
