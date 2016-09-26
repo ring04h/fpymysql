@@ -6,6 +6,14 @@ Based on Mysql.class.php
 不想使用sqlalchemy, 又没有好用的轮子类, 就自己造一个了   
    
 ## EXAMPLE 使用帮助
+### 防止SQL注入建议
+一定要记得针对来自客户端的变量进行安全转义   
+```python
+from pymysql import escape_string
+id = request.args.get('id')
+id = escape_string(id)
+```
+   
 ### 引入Class类
 ```python
 from libmysql import MYSQL
