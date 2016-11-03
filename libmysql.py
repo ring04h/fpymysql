@@ -132,6 +132,7 @@ class MYSQL:
             if not sql:
                 return
             cursor.execute(sql)
+            self.connection.commit() # not auto commit
             if fetchone:
                 return cursor.fetchone()
             else:
