@@ -40,6 +40,13 @@ cond = {'email': 'ringzero@0x557.org'}
 rows = dbconn.delete(table='users', condition=cond, limit='1')
 print('deleted {} records success..'.format(rows))
 
+# 统计数据库记录条数
+cond = {'email': 'ringzero@wooyun.org'}
+cnt = dbconn.count(
+                table='users', 
+                condition=cond)
+print(cnt)
+
 # select 查询信息
 fields = ('id', 'email')
 cond = {'email': 'ringzero@wooyun.org'}
