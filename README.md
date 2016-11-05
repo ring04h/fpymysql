@@ -93,6 +93,16 @@ for row in rows:
     print(row)
 ```
 
+### 统计数据库记录条数
+不指定 condition 字段, 将返回数据库的总记录条数
+```python
+cond = {'email': 'ringzero@wooyun.org'}
+cnt = dbconn.count(
+                table='users', 
+                condition=cond)
+print(cnt)
+```
+   
 ### query 执行自定义SQL语句
 ```python
 sql = 'select * from users limit 0, 5'

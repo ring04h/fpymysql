@@ -84,6 +84,28 @@ class MYSQL:
 
             return result
 
+    def count(self, table, condition):
+        """count database record"""
+        with self.connection.cursor() as cursor:
+            # WHERE CONDITION
+            if not condition:
+                where = '1';
+            elif isinstance(condition, dict):
+                where = self.join_field_value( condition, ' AND ' )
+            else:
+                where = condition
+            
+            # SELECT COUNT(*) as cnt
+            sql = "SELECT COUNT(*) as cnt FROM {table} WHERE {where}".format(
+                table=table, where=where)
+
+            # EXECUTE SELECT COUNT sql
+            cursor.execute(sql)
+
+            # RETURN cnt RESULT
+            return cursor.fetchone().get('cnt')
+
+
     def fetch_rows(self, table, fields=None, condition=None, order=None, limit=None, fetchone=False):
         """mysql select() function"""
         with self.connection.cursor() as cursor:
