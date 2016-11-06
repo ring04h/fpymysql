@@ -65,7 +65,7 @@ class MYSQL:
 
             return result
 
-    def update(self, table, data, condition):
+    def update(self, table, data, condition=None):
         """mysql update() function"""
         with self.connection.cursor() as cursor:
             params = self.join_field_value(data)
@@ -84,7 +84,7 @@ class MYSQL:
 
             return result
 
-    def count(self, table, condition):
+    def count(self, table, condition=None):
         """count database record"""
         with self.connection.cursor() as cursor:
             # WHERE CONDITION
