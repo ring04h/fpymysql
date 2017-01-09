@@ -14,6 +14,24 @@ id = request.args.get('id')
 id = escape_string(id)
 ```
    
+### 使用参数绑定的方式来防止SQL注入
+```python
+def insert(self, table, data):
+    """mysql insert() function"""
+    with self.connection.cursor() as cursor:
+        params = self.join_field_value(data);
+        sql = "INSERT INTO {table} SET {params}".format(table=table, params=params)
+        cursor.execute(sql, tuple(data.values()))
+        self.connection.commit()
+
+def join_field_value(self, data, glue = ', '):
+    sql = comma = ''
+    for key, value in data.items():
+        sql +=  "{}`{}` = %s".format(comma, key)
+        comma = glue
+    return sql
+```
+   
 ### 引入Class类
 ```python
 from libmysql import MYSQL
