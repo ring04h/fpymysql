@@ -169,7 +169,7 @@ class MYSQL:
         for key, value in data.iteritems():
             if isinstance(value, str):
                 value = pymysql.escape_string(value)
-            sql +=  "{}`{}` = '{}'".format(comma, key, value)
+            sql +=  "{0}`{1}` = '{2}'".format(comma, key, value)
             comma = glue
         return sql
 
