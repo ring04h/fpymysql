@@ -39,7 +39,7 @@ class MYSQL:
         """mysql insert() function"""
         with self.connection.cursor() as cursor:
             params = self.join_field_value(data);
-            sql = "INSERT INTO {table} SET {params}".format(table=table, params=params)
+            sql = "INSERT IGNORE INTO {table} SET {params}".format(table=table, params=params)
 
             result = cursor.execute(sql)
             self.connection.commit() # not autocommit
