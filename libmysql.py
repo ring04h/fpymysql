@@ -64,7 +64,12 @@ class MYSQL:
             sql = "DELETE FROM {table} WHERE {where} {limits}".format(
                 table=table, where=where, limits=limits)
 
-            result = cursor.execute(sql, tuple(prepared))
+            # check PreparedStatement
+            if not prepared:
+                result = cursor.execute(sql)
+            else:
+                result = cursor.execute(sql, tuple(prepared))
+
             self.connection.commit() # not autocommit
 
             return result
@@ -89,7 +94,12 @@ class MYSQL:
             sql = "UPDATE {table} SET {params} WHERE {where}".format(
                 table=table, params=params, where=where)
 
-            result = cursor.execute(sql, tuple(prepared))
+            # check PreparedStatement
+            if not prepared:
+                result = cursor.execute(sql)
+            else:
+                result = cursor.execute(sql, tuple(prepared))
+
             self.connection.commit() # not autocommit
             return result
 
@@ -111,8 +121,11 @@ class MYSQL:
             sql = "SELECT COUNT(*) as cnt FROM {table} WHERE {where}".format(
                 table=table, where=where)
 
-            # EXECUTE SELECT COUNT sql
-            cursor.execute(sql, tuple(prepared))
+            # check PreparedStatement, EXECUTE SELECT COUNT sql
+            if not prepared:
+                cursor.execute(sql)
+            else:
+                cursor.execute(sql, tuple(prepared))
 
             # RETURN cnt RESULT
             return cursor.fetchone().get('cnt')
@@ -151,7 +164,11 @@ class MYSQL:
             sql = "SELECT {fields} FROM {table} WHERE {where} {orderby} {limits}".format(
                 fields=fields, table=table, where=where, orderby=orderby, limits=limits)
 
-            cursor.execute(sql, tuple(prepared))
+            # check PreparedStatement
+            if not prepared:
+                cursor.execute(sql)
+            else:
+                cursor.execute(sql, tuple(prepared))
             
             if fetchone:
                 return cursor.fetchone()
