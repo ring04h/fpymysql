@@ -45,8 +45,8 @@ class MYSQL:
 
             params = self.join_field_value(data)
 
-            sql = "INSERT IGNORE INTO {table} SET {params}".\
-                format(table=table, params=params)
+            sql = "INSERT IGNORE INTO {table} SET {params}".format(
+                table=table, params=params)
 
             cursor.execute(sql, tuple(data.values()))
             last_id = self.connection.insert_id()
