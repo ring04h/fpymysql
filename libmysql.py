@@ -11,7 +11,19 @@ SQL Injection Warning: pymysql.escape_string(value)
 
 """
 
-from pymysql import (connect, cursors, escape_string, err)
+from pymysql import (connect, cursors, err, escape_sequence)
+
+
+def connect_db(mysqldb_conn):
+    # msyql dababase connection info
+    dbconn = MYSQL(
+        dbhost=mysqldb_conn.get('host'),
+        dbport=mysqldb_conn.get('port'),
+        dbuser=mysqldb_conn.get('user'),
+        dbpwd=mysqldb_conn.get('password'),
+        dbname=mysqldb_conn.get('db'),
+        dbcharset=mysqldb_conn.get('charset'))
+    return dbconn
 
 
 class MYSQL:
@@ -60,8 +72,7 @@ class MYSQL:
         assert isinstance(data, list)
         with self.connection.cursor() as cursor:
 
-            params = [str(tuple(escape_string(str(x))
-                                for x in param.values())) for param in data]
+            params = [escape_sequence(param.values(), 'utf-8') for param in data]
 
             values = ', '.join(params)
             fields = ', '.join('`{}`'.format(x) for x in param.keys())
