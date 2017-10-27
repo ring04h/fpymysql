@@ -29,7 +29,7 @@ def connect_db(mysqldb_conn):
 class MYSQL:
     """A Friendly pymysql Class, Provide CRUD functionality"""
 
-    def __init__(self, dbhost, dbuser, dbpwd, dbname, dbcharset, dbport=3306):
+    def __init__(self, dbhost, dbuser, dbpwd, dbname, dbcharset='utf-8', dbport=3306):
         self.dbhost = dbhost
         self.dbport = int(dbport)
         self.dbuser = dbuser
@@ -67,17 +67,19 @@ class MYSQL:
             return last_id
 
     def bulk_insert(self, table, data):
-        """mysql bulk_insert() function"""
 
-        assert isinstance(data, list)
+        assert isinstance(data, list) and data != [], "data format is error"
+
         with self.connection.cursor() as cursor:
 
-            params = [escape_sequence(param.values(), 'utf-8') for param in data]
+            params = []
+            for param in data:
+                params.append(escape_sequence(param.values(), 'utf-8'))
 
             values = ', '.join(params)
             fields = ', '.join('`{}`'.format(x) for x in param.keys())
 
-            sql = "INSERT IGNORE INTO {table} ({fields}) VALUES {values}".format(
+            sql = u"INSERT IGNORE INTO {table} ({fields}) VALUES {values}".format(
                 fields=fields, table=table, values=values)
 
             cursor.execute(sql)
@@ -108,7 +110,6 @@ class MYSQL:
             sql = "DELETE FROM {table} WHERE {where} {limits}".format(
                 table=table, where=where, limits=limits)
 
-            # check PreparedStatement
             if not prepared:
                 result = cursor.execute(sql)
             else:
@@ -157,7 +158,6 @@ class MYSQL:
 
             prepared = []
 
-            # WHERE CONDITION
             if not condition:
                 where = '1'
             elif isinstance(condition, dict):
@@ -166,17 +166,15 @@ class MYSQL:
             else:
                 where = condition
 
-            # SELECT COUNT(*) as cnt
             sql = "SELECT COUNT(*) as cnt FROM {table} WHERE {where}".format(
                 table=table, where=where)
 
-            # check PreparedStatement, EXECUTE SELECT COUNT sql
             if not prepared:
                 cursor.execute(sql)
             else:
                 cursor.execute(sql, tuple(prepared))
 
-            # RETURN cnt RESULT
+            self.connection.commit()
             return cursor.fetchone().get('cnt')
 
     def fetch_rows(self, table, fields=None, condition=None, order=None, limit=None, fetchone=False):
@@ -195,7 +193,6 @@ class MYSQL:
             else:
                 fields = fields
 
-            # WHERE CONDITION
             if not condition:
                 where = '1'
             elif isinstance(condition, dict):
@@ -204,24 +201,22 @@ class MYSQL:
             else:
                 where = condition
 
-            # ORDER BY OPTIONS
             if not order:
                 orderby = ''
             else:
                 orderby = 'ORDER BY {order}'.format(order=order)
 
-            # LIMIT NUMS
             limits = "LIMIT {limit}".format(limit=limit) if limit else ""
 
             sql = "SELECT {fields} FROM {table} WHERE {where} {orderby} {limits}".format(
                 fields=fields, table=table, where=where, orderby=orderby, limits=limits)
 
-            # check PreparedStatement
             if not prepared:
                 cursor.execute(sql)
             else:
                 cursor.execute(sql, tuple(prepared))
 
+            self.connection.commit()
             return cursor.fetchone() if fetchone else cursor.fetchall()
 
     def query(self, sql, fetchone=False, execute=False):
@@ -229,7 +224,7 @@ class MYSQL:
         with self.connection.cursor() as cursor:
 
             cursor.execute(sql)
-            self.connection.commit()  # not auto commit
+            self.connection.commit()
 
             if execute:
                 return
@@ -244,7 +239,7 @@ class MYSQL:
         return sql
 
     def close(self):
-        if self.connection:
+        if getattr(self, 'connection', 0):
             return self.connection.close()
 
     def __del__(self):
