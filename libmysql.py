@@ -26,6 +26,19 @@ def connect_db(mysqldb_conn):
     return dbconn
 
 
+def connect_ssdc(mysqldb_conn):
+    """Connect to the database return SSDictCursor dbsession"""
+    connection = connect(
+        host=mysqldb_conn.get('host'),
+        port=int(mysqldb_conn.get('port')) or 3306,
+        user=mysqldb_conn.get('user'),
+        password=mysqldb_conn.get('password'),
+        db=mysqldb_conn.get('db'),
+        charset=mysqldb_conn.get('charset'),
+        cursorclass=cursors.SSDictCursor)
+    return connection
+
+
 class MYSQL:
     """A Friendly pymysql Class, Provide CRUD functionality"""
 
@@ -68,7 +81,7 @@ class MYSQL:
 
     def bulk_insert(self, table, data):
 
-        assert isinstance(data, list) and data != [], "data format is error"
+        assert isinstance(data, list) and data != [], "data_format_error"
 
         with self.connection.cursor() as cursor:
 
